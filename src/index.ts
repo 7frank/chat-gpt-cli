@@ -1,56 +1,39 @@
-const open = require("open");
-const readline = require("readline");
-const url = require("url");
-const querystring = require("querystring");
+import * as open from "open";
+import * as readline from "readline";
+import * as url from "url";
+import * as querystring from "querystring";
+import * as cy from "cypress";
 
-// Create a readline interface to read input from the user
+// Set the base URL for the login page
+const baseUrl = "http://localhost:3000/";
+
+// Generate a random string to use as the state parameter
+const state = Math.random().toString(36).substring(2);
+
+// Generate the login URL with the state parameter
+const loginUrl =
+  url.resolve(baseUrl, "/login") + "?" + querystring.stringify({ state });
+
+// Use Cypress to open the login page in a new browser window
+cy.visit(loginUrl, {
+  onBeforeLoad(win) {
+    // Use the `open` module to open the login page in a new browser window
+    open(loginUrl, { app: ["google chrome", "--incognito"] });
+  },
+});
+
+// Create a readline interface for user input
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// This function prompts the user to open a web browser and go to the specified URL
-function promptLogin() {
-  // If the user is not logged in, prompt them to open a web browser and go to the specified URL
-  const loginUrl = "https://example.com/login";
-  console.log(`Please open a web browser and go to ${loginUrl} to log in.`);
+// Prompt the user to enter the code from the login page
+rl.question("Enter the code from the login page: ", (code) => {
+  // Close the readline interface
+  rl.close();
 
-  // Open the login URL in the default web browser
-  open(loginUrl);
-}
-
-// This function processes the redirect URL and completes the login process
-function processRedirectUrl(redirectUrlStr) {
-  const redirectUrl = url.parse(redirectUrlStr);
-
-  // Parse the one-time token or code from the URL query string
-  const urlParams = querystring.parse(redirectUrl.query);
-  const token = urlParams.get("token");
-
-  if (!token) {
-    console.error("Error: No token found in URL query string.");
-    return;
-  }
-
-  // Use the token to complete the login process
-  console.log(`Your login token is: ${token}`);
-}
-
-// Check if the user is already logged in
-if (isLoggedIn()) {
-  console.log("You are already logged in.");
-} else {
-  // If the user is not logged in, prompt them to open a web browser and go to the login URL
-  promptLogin();
-
-  // Once the user has logged in and been redirected to the specified redirect URL,
-  // they should enter the full URL into the CLI
-  rl.question("Enter the full redirect URL: ", (redirectUrlStr) => {
-    processRedirectUrl(redirectUrlStr);
-  });
-}
-
-// This function should check whether the user is already logged in
-function isLoggedIn() {
-  return false;
-}
+  // Use Cypress to fill in the code on the login page and submit the form
+  cy.get("#code").type(code);
+  cy.get("#submit").click();
+});

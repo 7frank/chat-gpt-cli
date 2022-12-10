@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "estrella src/index.ts | node"
+    "start": "node build.js | node"
   },
   "keywords": [
     "login",
