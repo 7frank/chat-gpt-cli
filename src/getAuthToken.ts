@@ -1,5 +1,5 @@
 import * as puppeteer from "puppeteer";
-
+import { Subject } from "rxjs";
 interface AuthOptions {
   user?: string;
   password?: string;
@@ -50,12 +50,24 @@ export async function getAuthToken(
   await page.waitForNavigation();
   console.log("login complete");
 
-  // Get the list of HTTPS cookies
-  const cookies = await page.cookies();
+  const token$ = new Subject<string>();
 
-  // Find the authentication token cookie
-  const authCookie = cookies.find((cookie) => cookie.name === authTokenKey);
+  let lastToken: string | null = null;
+  async function getToken() {
+    // Get the list of HTTPS cookies
+    const cookies = await page.cookies();
+    console.log("test for new token");
+    // Find the authentication token cookie
+    const authCookie = cookies.find((cookie) => cookie.name === authTokenKey);
+    const currToken = authCookie?.value;
 
-  // Return the value of the authentication token
-  return authCookie?.value;
+    if (currToken && lastToken != currToken) {
+      console.log("token changed");
+      token$.next(currToken);
+      lastToken = currToken;
+    }
+  }
+  setInterval(getToken, 1000);
+
+  return token$;
 }
