@@ -1,39 +1,47 @@
-import * as open from "open";
-import * as readline from "readline";
-import * as url from "url";
-import * as querystring from "querystring";
-import * as cy from "cypress";
+import * as puppeteer from "puppeteer";
 
-// Set the base URL for the login page
-const baseUrl = "http://localhost:3000/";
+async function getAuthToken(url: string) {
+  // Launch a new browser instance
+  const browser = await puppeteer.launch({ headless: false });
 
-// Generate a random string to use as the state parameter
-const state = Math.random().toString(36).substring(2);
+  // Create a new page
+  const page = await browser.newPage();
 
-// Generate the login URL with the state parameter
-const loginUrl =
-  url.resolve(baseUrl, "/login") + "?" + querystring.stringify({ state });
+  // Navigate to the website
+  await page.goto(url);
 
-// Use Cypress to open the login page in a new browser window
-cy.visit(loginUrl, {
-  onBeforeLoad(win) {
-    // Use the `open` module to open the login page in a new browser window
-    open(loginUrl, { app: ["google chrome", "--incognito"] });
-  },
-});
+  await page.waitForNavigation();
 
-// Create a readline interface for user input
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+  //await page.waitForSelector('button:contains("Log in")');
 
-// Prompt the user to enter the code from the login page
-rl.question("Enter the code from the login page: ", (code) => {
-  // Close the readline interface
-  rl.close();
+  await page.waitForXPath('//button[contains(text(), "Log in")]');
 
-  // Use Cypress to fill in the code on the login page and submit the form
-  cy.get("#code").type(code);
-  cy.get("#submit").click();
-});
+  // await page.click('button:contains("Log in")');
+
+  // Get a reference to the "Log in" button
+  const loginButton = await page.$x('//button[contains(text(), "Log in")]');
+
+  // Click on the "Log in" button
+  await loginButton[0].click();
+
+  // Enter the username and password
+  //  await page.type("#username", "my-username");
+  //  await page.type("#password", "my-password");
+
+  // Click the login button
+  //await page.click("#login-button");
+
+  // Wait for the page to load
+  await page.waitForNavigation();
+
+  // Get the list of HTTPS cookies
+  const cookies = await page.cookies({ https: true });
+
+  // Find the authentication token cookie
+  const authCookie = cookies.find((cookie) => cookie.name === "auth-token");
+
+  // Return the value of the authentication token
+  return authCookie.value;
+}
+
+getAuthToken("https://chat.openai.com/chat").catch(console.error);
