@@ -10,3 +10,5 @@ const authTokenValue = await getAuthToken("https://chat.openai.com/chat", {
 });
 
 updateEnvValue("OPENAI_TOKEN", authTokenValue);
+
+console.log(authTokenValue);
