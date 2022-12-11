@@ -15,7 +15,9 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  },
   "devDependencies": {
     "puppeteer": "^19.4.0",
     "tsx": "^3.12.1"
