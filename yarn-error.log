@@ -1,0 +1,60 @@
+Arguments: 
+  /home/freimann/.nvm/versions/node/v14.17.6/bin/node /usr/local/bin/yarn login
+
+PATH: 
+  /home/freimann/miniconda/bin:/home/freimann/miniconda/condabin:/home/freimann/.nvm/versions/node/v14.17.6/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/freimann/.krew/bin:/home/freimann/.local/bin:/home/freimann/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/local/go/bin
+
+Yarn version: 
+  1.22.11
+
+Node version: 
+  14.17.6
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: canceled
+      at Interface.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:137023:13)
+      at Interface.emit (events.js:400:28)
+      at Interface._ttyWrite (readline.js:910:16)
+      at ReadStream.onkeypress (readline.js:235:10)
+      at ReadStream.emit (events.js:400:28)
+      at emitKeys (internal/readline/utils.js:358:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (readline.js:1179:36)
+      at ReadStream.emit (events.js:400:28)
+      at addChunk (internal/streams/readable.js:290:12)
+
+npm manifest: 
+  {
+    "name": "login-flow",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "A browser-based login flow implemented in Node.js",
+    "main": "src/index.ts",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "login": "tsx src/login.ts"
+    },
+    "keywords": [
+      "login",
+      "browser",
+      "nodejs"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "dotenv": "^16.0.3"
+    },
+    "devDependencies": {
+      "puppeteer": "^19.4.0",
+      "tsx": "^3.12.1"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
