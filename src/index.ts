@@ -3,10 +3,11 @@ import * as fs from "fs";
 import * as dotenv from "dotenv";
 
 dotenv.config();
-
-const authNToken = await getAuthToken("https://chat.openai.com/chat").catch(
-  console.error
-);
+console.log(process.env);
+const authNToken = await getAuthToken("https://chat.openai.com/chat", {
+  user: process.env.OPENAI_USERNAME,
+  password: process.env.OPENAI_PASSWORD,
+}).catch(console.error);
 
 updateEnvValue("OPENAI_TOKEN", authNToken);
 
@@ -56,7 +57,12 @@ function updateEnvValue(key: string, value: string) {
   );
 }
 
-async function getAuthToken(url: string) {
+interface AuthOptions {
+  user?: string;
+  password?: string;
+}
+
+async function getAuthToken(url: string, { user, password }: AuthOptions) {
   // Launch a new browser instance
   const browser = await puppeteer.launch({ headless: false });
 
@@ -75,10 +81,19 @@ async function getAuthToken(url: string) {
   await page.waitForNavigation();
 
   // Enter the username and password
-  //  await page.type("#username", "my-username");
-  //  await page.type("#password", "my-password");
+  if (user) {
+    await page.waitForSelector("#username");
+    await page.type("#username", user);
+  }
+
+  if (password) {
+    await page.waitForSelector("#password");
+    await page.type("#password", password);
+  }
 
   //await page.waitForNavigation();
+
+  await page.waitForFunction("window.location.pathname == '/chat'");
 
   // Get the list of HTTPS cookies
   const cookies = await page.cookies({ https: true });
