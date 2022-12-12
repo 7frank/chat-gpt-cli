@@ -12,7 +12,7 @@ Uses https://www.npmjs.com/package/chatgpt and adds login functionality.
   - add your credentials to the fields "OPENAI_USERNAME" and "OPENAI_PASSWORD" if you don't want to be prompted for them each time you login
   - `npm run login`
   - <b>alternatively</b> run `npm run login -- -p` to manually login. ( this might be necessary from time to time e.g. when required to solve captchas)
-- `npm run chat`
+- `npm run chat` (currently not working due to changes to chatcpt api T_T)
 
 # requirements
 
