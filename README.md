@@ -25,3 +25,7 @@ nodejs > v16.8.0
   - afterwards installl proper node version
     - `nvm install 16.8`
     - `nvm use 16.8`
+
+# todo
+
+- currently broken if captcha pops up

@@ -24,7 +24,7 @@ export async function getAuthToken(
 
   // Navigate to the website
   await page.goto(url);
-
+  // await page.waitForSelector(".testetet");
   // await page.waitForNavigation();
   await page.waitForSelector("button:nth-child(1)");
 
