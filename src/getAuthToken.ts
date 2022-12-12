@@ -12,7 +12,8 @@ puppeteer.use(StealthPlugin());
 interface AuthOptions {
   user?: string;
   password?: string;
-  authTokenKey?: string;
+  sessionTokenKey?: string;
+  clearanceTokenKey?: string;
   passiveMode?: boolean;
 }
 export async function getAuthToken(
@@ -20,7 +21,8 @@ export async function getAuthToken(
   {
     user,
     password,
-    authTokenKey = "__Secure-next-auth.session-token",
+    sessionTokenKey = "__Secure-next-auth.session-token",
+    clearanceTokenKey = "cf_clearance",
     passiveMode = false,
   }: AuthOptions
 ) {
@@ -45,7 +47,8 @@ export async function getAuthToken(
   });
 
   console.log("set user agent");
-  await page.setUserAgent(UserAgent.random().toString());
+  const puppeteerUserAgent = UserAgent.random().toString();
+  await page.setUserAgent(puppeteerUserAgent);
 
   // wait 2 minutes at max
   console.log("set defaults");
@@ -98,21 +101,45 @@ export async function getAuthToken(
     );
   }
 
-  const token$ = new Subject<string>();
+  const token$ = new Subject<{
+    sessionToken: string;
+    userAgent: string;
+    clearanceToken: string;
+  }>();
 
-  let lastToken: string | null = null;
+  let lastSessionToken: string | null = null;
+  let lastClearanceToken: string | null = null;
   async function getToken() {
     // Get the list of HTTPS cookies
     const cookies = await page.cookies();
     console.log("test for new token");
     // Find the authentication token cookie
-    const authCookie = cookies.find((cookie) => cookie.name === authTokenKey);
-    const currToken = authCookie?.value;
+    const sessionTokenCookie = cookies.find(
+      (cookie) => cookie.name === sessionTokenKey
+    );
+    const currentSessionToken = sessionTokenCookie?.value;
 
-    if (currToken && lastToken != currToken) {
-      console.log("token changed");
-      token$.next(currToken);
-      lastToken = currToken;
+    const clearanceTokenCookie = cookies.find(
+      (cookie) => cookie.name === clearanceTokenKey
+    );
+    const currentClearanceToken = clearanceTokenCookie?.value;
+
+    if (currentSessionToken && currentClearanceToken) {
+      if (
+        lastSessionToken != currentSessionToken ||
+        lastClearanceToken != currentClearanceToken
+      ) {
+        console.log("(session) token changed");
+
+        token$.next({
+          sessionToken: currentSessionToken,
+          userAgent: puppeteerUserAgent,
+          clearanceToken: currentClearanceToken,
+        });
+        // store copy of token locally
+        lastSessionToken = currentSessionToken;
+        lastClearanceToken = currentClearanceToken;
+      }
     }
   }
   setInterval(getToken, 1000);

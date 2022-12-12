@@ -35,10 +35,14 @@ const cmd = command({
       }
     ).catch(console.log);
 
-    authTokenSubject$.subscribe((token: string) => {
-      console.log("write new token to .env OPENAI_TOKEN");
-      updateEnvValue("OPENAI_TOKEN", token);
-    });
+    authTokenSubject$?.subscribe(
+      ({ sessionToken, clearanceToken, userAgent }) => {
+        console.log("update .env OPENAI_*");
+        updateEnvValue("OPENAI_SESSION_TOKEN", sessionToken);
+        updateEnvValue("OPENAI_CLEARANCE_TOKEN", clearanceToken);
+        updateEnvValue("OPENAI_USER_AGENT", userAgent);
+      }
+    );
   },
 });
 

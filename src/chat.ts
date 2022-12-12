@@ -2,9 +2,9 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const token = process.env.OPENAI_TOKEN;
+const sessionToken = process.env.OPENAI_SESSION_TOKEN;
 
-if (!token) {
+if (!sessionToken) {
   console.log("you must login first running 'npm run login'");
 }
 
@@ -12,8 +12,13 @@ import { ChatGPTAPI } from "chatgpt";
 
 async function askQuestion(sessionToken: string) {
   // sessionToken is required; see below for details
+
+  console.log(process.env.OPENAI_USER_AGENT);
+  return;
   const api = new ChatGPTAPI({
     sessionToken,
+    clearanceToken: process.env.OPENAI_CLEARANCE_TOKEN!,
+    userAgent: process.env.OPENAI_USER_AGENT!,
   });
 
   //console.log("ensureAuth");
@@ -29,4 +34,4 @@ async function askQuestion(sessionToken: string) {
   console.log(response);
 }
 // console.log(token);
-askQuestion(token);
+askQuestion(sessionToken);
