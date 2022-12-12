@@ -11,6 +11,8 @@ Uses https://www.npmjs.com/package/chatgpt and adds login functionality.
   - `mv .example.env .env`
   - add your credentials to the fields "OPENAI_USERNAME" and "OPENAI_PASSWORD" if you don't want to be prompted for them each time you login
   - `npm run login`
+  - <b>alternatively</b> run `npm run login -- -p` to manually login. ( this might be necessary from time to time e.g. when required to solve captchas)
+- `npm run chat`
 
 # requirements
 
@@ -28,4 +30,4 @@ nodejs > v16.8.0
 
 # todo
 
-- currently broken if captcha pops up
+- detect captchas and wait for user to solve them

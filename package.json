@@ -18,7 +18,11 @@
   "license": "ISC",
   "dependencies": {
     "chatgpt": "^2.0.7",
-    "dotenv": "^16.0.3"
+    "cmd-ts": "^0.11.0",
+    "dotenv": "^16.0.3",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "user-agents": "^1.0.1227"
   },
   "devDependencies": {
     "puppeteer": "^19.4.0",
